@@ -11,7 +11,7 @@ const BannerHome = ({ children }) => {
       sx={{
         
         width: "100%",
-        minHeight: { xs: 180, md: 320, lg: 380, }, // Altura adaptable
+        minHeight: { xs: 180, md: 320, lg: 380, }, 
         
         background: "#00296b",
         color: "#fff",

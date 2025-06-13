@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const HEADER_HEIGHT = 56; // px para xs, puedes ajustar si usas md
+const HEADER_HEIGHT = 56; 
 
 const Header = () => {
   const navigate = useNavigate();
