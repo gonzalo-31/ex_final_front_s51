@@ -44,7 +44,6 @@ const FiltrarLicitaciones = () => {
     setLoading(true);
     setError(null);
 
-    // Validar que ambos filtros estén presentes
     if (!fecha || !estado) {
       setOpenModal(true);
       setLoading(false);

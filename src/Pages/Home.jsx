@@ -18,8 +18,7 @@ const Home = () => {
         <Paper
           elevation={4}
           sx={{
-            background: "rgba(255, 255, 255, 0.99)", // Azul muy claro y translúcido
-            // o prueba: background: "#e3f0ff"
+            background: "rgba(255, 255, 255, 0.99)",
             borderRadius: 3,
             boxShadow: 3,
             p: 3,
