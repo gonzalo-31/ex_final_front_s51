@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Container, Paper, TextField, MenuItem, Button, CircularProgress } from "@mui/material";
+import { Box, Typography, Container,Paper, TextField, MenuItem, Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions,} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 
@@ -37,21 +37,27 @@ const FiltrarLicitaciones = () => {
   const [error, setError] = useState(null);
   const [fecha, setFecha] = useState("");
   const [estado, setEstado] = useState("");
+  const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
 
   const handleBuscar = async () => {
     setLoading(true);
     setError(null);
+
+    // Validar que ambos filtros estén presentes
+    if (!fecha || !estado) {
+      setOpenModal(true);
+      setLoading(false);
+      return;
+    }
+
     try {
-      let params = [];
-      if (fecha) {
-        const [yyyy, mm, dd] = fecha.split("-");
-        params.push(`fecha=${dd}${mm}${yyyy}`);
-      }
-      if (estado) {
-        params.push(`estado=${estado}`);
-      }
-      params.push("ticket=AC3A098B-4CD0-41AF-81A5-41284248419B");
+      const [yyyy, mm, dd] = fecha.split("-");
+      const params = [
+        `fecha=${dd}${mm}${yyyy}`,
+        `estado=${estado}`,
+        "ticket=AC3A098B-4CD0-41AF-81A5-41284248419B",
+      ];
       const url = `https://api.mercadopublico.cl/servicios/v1/publico/licitaciones.json?${params.join("&")}`;
       const response = await fetch(url);
       if (!response.ok) throw new Error("Error al cargar datos");
@@ -74,7 +80,13 @@ const FiltrarLicitaciones = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ textAlign: "center", mt: { xs: "56px", md: "64px" }, p: { xs: 2, md: 4 } }}>
+      <Box
+        sx={{
+          textAlign: "center",
+          mt: { xs: "56px", md: "64px" },
+          p: { xs: 2, md: 4 },
+        }}
+      >
         <Typography
           variant="h4"
           gutterBottom
@@ -113,7 +125,7 @@ const FiltrarLicitaciones = () => {
             }}
           >
             <TextField
-              label="Fecha (aaaa-mm-dd)"
+              label="Fecha (dd-mm-aaaa)"
               type="date"
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
@@ -135,6 +147,9 @@ const FiltrarLicitaciones = () => {
                 width: { xs: "100%", sm: 150 },
                 background: "#fff",
                 borderRadius: 1,
+              }}
+              SelectProps={{
+                MenuProps: { disablePortal: true },
               }}
             >
               {estados.map((option) => (
@@ -161,7 +176,14 @@ const FiltrarLicitaciones = () => {
         </Paper>
         <Paper sx={{ height: 500, width: "100%", mt: 2 }}>
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: 200 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: 200,
+              }}
+            >
               <CircularProgress />
             </Box>
           ) : (
@@ -172,8 +194,6 @@ const FiltrarLicitaciones = () => {
               rowsPerPageOptions={[5, 10]}
               localeText={localeText}
               sx={{
-              
-                
                 "& .MuiDataGrid-row:nth-of-type(even)": {
                   backgroundColor: "#f5faff",
                 },
@@ -190,10 +210,20 @@ const FiltrarLicitaciones = () => {
             />
           )}
         </Paper>
-        <br />
+        <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+          <DialogTitle>Campos requeridos</DialogTitle>
+          <DialogContent>
+            Debes seleccionar una fecha y un estado para filtrar.
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenModal(false)} autoFocus>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Button
           variant="contained"
-          sx={{ mb: 2, mt: 2 }}
+          sx={{ mb: 2, mt: 4 }}
           onClick={() => navigate("/")}
         >
           Regresar
